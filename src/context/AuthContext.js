@@ -6,9 +6,10 @@ import {
   signOut,
   updateEmail,
   updatePassword,
+  signInWithPopup
 } from "firebase/auth";
 import { React, useContext, useState, useEffect, createContext } from "react";
-import auth from "../firebase";
+import { auth, provider } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -26,7 +27,9 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     return signOut(auth);
   };
-
+  const singinGoogle = () => {
+    return signInWithPopup(auth, provider);
+  }
   const resetPassword = (email) => {
     return sendPasswordResetEmail(auth, email);
   };
@@ -56,6 +59,7 @@ const AuthProvider = ({ children }) => {
         resetPassword,
         updateUserEmail,
         updateUserPassword,
+        singinGoogle
       }}
     >
       {!loading && children}

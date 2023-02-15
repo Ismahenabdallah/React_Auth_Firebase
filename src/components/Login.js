@@ -2,11 +2,13 @@ import { React, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../firebase";
 
 export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login } = useAuth();
+  const { login, singinGoogle } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,6 +28,28 @@ export default function Login() {
 
     setLoading(false);
   }
+  /*** other methods  without context provider   */
+  const handleWithoutContextProvider = () => {
+    signInWithPopup(auth, provider).then((data) => {
+      console.log(data)
+      navigate(redirectPath);
+    })
+  }
+  /** other methods  without context provider **/
+
+
+  async function handleGoogle(e) {
+    try {
+      setError("");
+      setLoading(true);
+      await singinGoogle()
+      navigate(redirectPath);
+
+    } catch (error) {
+      setError("Failed to log in");
+    }
+  }
+
 
   return (
     <>
@@ -49,6 +73,9 @@ export default function Login() {
             </Form.Group>
             <Button disabled={loading} className="w-100 mt-3" type="submit">
               Log In
+            </Button>
+            <Button disabled={loading} onClick={handleGoogle} className="w-100 mt-3" type="submit">
+              Log In With Google
             </Button>
           </Form>
           <div className="w-100 text-center mt-3">
